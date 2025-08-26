@@ -28,11 +28,17 @@
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <!-- Framer Motion -->
-  <script src="https://unpkg.com/framer-motion@10.18.0/dist/framer-motion.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/framer-motion@10.18.0/dist/framer-motion.umd.js"></script>
 
   <script type="text/babel" data-type="module" data-presets="env,react">
     const { useMemo, useState } = React;
-    const { motion } = window.framerMotion;
+    // Robust motion fallback: render plain elements if Framer Motion UMD isn't available
+    let motion = window.framerMotion?.motion;
+    if (!motion) {
+      motion = new Proxy({}, {
+        get: (_, tag) => (props = {}) => React.createElement(tag, props, props.children)
+      });
+    }
 
     const PRODUCTS = [
       { id: "dv-001", name: "Barcelona 25/26 Home Shirt", price: 65, size: "M", category: "Football Shirts", condition: "New with tags", image: "https://via.placeholder.com/600x450?text=Barcelona+25%2F26" },

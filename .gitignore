@@ -1,0 +1,24 @@
+# dependencies
+node_modules/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# editor
+.DS_Store
+.vscode/
+.idea/
+
+# build outputs
+dist/
+build/
+out/
+.next/
+
+# misc
+dripvault.zip
+dripvault_public.zip
+

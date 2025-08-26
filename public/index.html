@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DripVault</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"] },
+        },
+      },
+      darkMode: "class",
+    };
+  </script>
+  <style>
+    html, body, #root { height: 100%; }
+    body { background: #000; color: #fff; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- React and Babel -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <!-- Framer Motion -->
+  <script src="https://unpkg.com/framer-motion@10.18.0/dist/framer-motion.umd.js"></script>
+
+  <script type="text/babel" data-type="module" data-presets="env,react">
+    const { useMemo, useState } = React;
+    const { motion } = window.framerMotion;
+
+    const PRODUCTS = [
+      { id: "dv-001", name: "Barcelona 25/26 Home Shirt", price: 65, size: "M", category: "Football Shirts", condition: "New with tags", image: "https://via.placeholder.com/600x450?text=Barcelona+25%2F26" },
+      { id: "dv-002", name: "Milan 24/25 Home Shirt", price: 65, size: "M", category: "Football Shirts", condition: "New with tags", image: "https://via.placeholder.com/600x450?text=Milan+24%2F25" },
+      { id: "dv-003", name: "Corteiz France Tee Black", price: 75, size: "S", category: "Designer Clothing", condition: "New with tags", image: "https://via.placeholder.com/600x450?text=Corteiz+France+Tee" },
+      { id: "dv-004", name: "Corteiz OG Island Tee Black", price: null, size: "M", category: "Designer Clothing", condition: "Brand New", image: "https://via.placeholder.com/600x450?text=Corteiz+OG+Island" },
+      { id: "dv-005", name: "Trapstar Tee", price: null, size: "M", category: "Designer Clothing", condition: "Used, Like New", image: "https://via.placeholder.com/600x450?text=Trapstar+Tee" },
+      { id: "dv-006", name: "Black Yeezy Slides", price: null, size: "44", category: "Footwear", condition: "Brand New", image: "https://via.placeholder.com/600x450?text=Yeezy+Slides" },
+    ];
+
+    const CATEGORIES = ["All", "Football Shirts", "Designer Clothing", "Footwear"];
+    const SIZES = ["S", "M", "L", "XL", "44"];
+
+    function Badge({ children }) {
+      return (
+        <span className="inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-medium tracking-wide border-violet-400 text-violet-300">{children}</span>
+      );
+    }
+
+    function SectionTitle({ eyebrow, title, subtitle }) {
+      return (
+        <motion.div className="mb-8 text-center" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+          {eyebrow && <div className="mb-2 text-xs uppercase tracking-[0.2em] text-violet-400">{eyebrow}</div>}
+          <h2 className="text-4xl sm:text-5xl font-extrabold bg-gradient-to-r from-violet-400 via-pink-500 to-orange-400 bg-clip-text text-transparent">{title}</h2>
+          {subtitle && <p className="mt-2 text-zinc-300 max-w-2xl mx-auto">{subtitle}</p>}
+        </motion.div>
+      );
+    }
+
+    function FilterBar({ query, setQuery, category, setCategory, size, setSize, sort, setSort, onClear, isFiltered }) {
+      return (
+        <div className="mb-8 grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="col-span-1 md:col-span-2">
+            <input type="text" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search teams, brands, items…" className="w-full rounded-2xl border border-violet-500/40 bg-zinc-950 px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/60" />
+          </div>
+          <div>
+            <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full rounded-2xl border border-violet-500/40 bg-zinc-950 px-5 py-3 text-sm">
+              {CATEGORIES.map((c) => (<option key={c} value={c}>{c}</option>))}
+            </select>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <select value={size} onChange={(e) => setSize(e.target.value)} className="rounded-2xl border border-violet-500/40 bg-zinc-950 px-5 py-3 text-sm">
+              {["All", ...SIZES].map((s) => (<option key={s} value={s}>{s}</option>))}
+            </select>
+            <select value={sort} onChange={(e) => setSort(e.target.value)} className="rounded-2xl border border-violet-500/40 bg-zinc-950 px-5 py-3 text-sm">
+              <option value="featured">Featured</option>
+              <option value="price_asc">Price: Low → High</option>
+              <option value="price_desc">Price: High → Low</option>
+            </select>
+          </div>
+          {isFiltered && (
+            <div className="col-span-full flex justify-end mt-2">
+              <button onClick={onClear} className="rounded-xl bg-zinc-800 border border-violet-400 px-4 py-2 text-xs font-bold text-violet-300 hover:bg-violet-900 transition">Clear Filters</button>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    function ProductCard({ item }) {
+      const message = encodeURIComponent(`Hi DripVault Plug, I'm interested in: ${item.name} (ID: ${item.id}). Is it still available?`);
+      const unavailable = item.price === null;
+      return (
+        <motion.div className="group rounded-3xl bg-gradient-to-br from-zinc-900 to-black border border-zinc-800 overflow-hidden hover:shadow-2xl hover:border-violet-400/60 transition-all" whileHover={{ scale: 1.05, rotate: 1 }}>
+          <div className="aspect-[4/3] w-full bg-gradient-to-br from-zinc-800 to-zinc-900 overflow-hidden relative">
+            <motion.img src={item.image} alt={item.name} className="h-full w-full object-cover object-center group-hover:scale-110 transition-transform duration-500" />
+            {unavailable && (<span className="absolute top-2 left-2 bg-zinc-900/80 text-orange-400 text-xs font-bold px-3 py-1 rounded-full border border-orange-400 shadow">Unavailable</span>)}
+          </div>
+          <div className="p-5">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <h3 className="font-extrabold text-white text-xl drop-shadow-lg">{item.name}</h3>
+                <p className="text-xs text-zinc-400">{item.condition}</p>
+              </div>
+              <div className="text-right">
+                <div className="text-violet-400 font-extrabold text-lg">{item.price ? `€${item.price}` : "DM for Price"}</div>
+                <div className="text-xs text-zinc-400">Size: {item.size}</div>
+              </div>
+            </div>
+            <div className="mt-4 flex items-center justify-between">
+              <Badge>{item.category}</Badge>
+              <a href={`https://www.instagram.com/dripvault_plug/`} target="_blank" rel="noreferrer" className="rounded-xl bg-violet-500 px-4 py-2 text-sm font-bold text-black hover:bg-violet-400 active:scale-[.98]">DM to Buy</a>
+            </div>
+            <div className="mt-3 text-xs text-zinc-500">Or quick link via <a className="underline hover:text-violet-400" href={`https://wa.me/?text=${message}`} target="_blank" rel="noreferrer">WhatsApp</a></div>
+          </div>
+        </motion.div>
+      );
+    }
+
+    function HeroNav() {
+      return (
+        <nav className="w-full sticky top-0 z-50 bg-black/90 border-b border-zinc-800 flex items-center justify-between px-8 py-4">
+          <div className="flex items-center gap-3">
+            <div className="bg-orange-400 text-black font-extrabold rounded-full w-10 h-10 flex items-center justify-center text-lg">DV</div>
+            <div>
+              <div className="font-extrabold text-xl leading-tight">DripVault Plug</div>
+              <div className="text-xs text-orange-300">Authentic Football & Designer</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-8">
+            <a href="#shop" className="hover:underline font-bold">Shop</a>
+            <a href="#about" className="hover:underline font-bold">About</a>
+            <a href="#reviews" className="hover:underline font-bold">Reviews</a>
+            <a href="#faq" className="hover:underline font-bold">FAQ</a>
+            <a href="https://www.instagram.com/dripvault_plug/" target="_blank" rel="noreferrer" className="ml-4 rounded-xl bg-orange-400 px-5 py-2 font-bold text-black hover:bg-orange-300 transition">Instagram</a>
+          </div>
+        </nav>
+      );
+    }
+
+    function HeroSection() {
+      return (
+        <section className="w-full flex flex-col lg:flex-row items-center justify-between gap-10 px-8 py-20 bg-black" id="hero">
+          <div className="flex-1 max-w-xl">
+            <h1 className="text-5xl sm:text-6xl font-extrabold mb-6">Authentic Football Shirts<br />& Designer Drip</h1>
+            <p className="mb-8 text-lg">Curated pieces, verified quality, fast shipping. Shop the latest drops or DM us to secure your size.</p>
+            <div className="flex gap-4 mb-8">
+              <a href="#shop" className="rounded-xl bg-orange-400 px-6 py-3 font-bold text-black hover:bg-orange-300 transition">Shop the Drop</a>
+              <a href="https://www.instagram.com/dripvault_plug/" target="_blank" rel="noreferrer" className="rounded-xl border-2 border-orange-400 px-6 py-3 font-bold hover:bg-orange-400 hover:text-black transition">DM on Instagram</a>
+            </div>
+            <div className="flex flex-wrap gap-3 mt-4">
+              <span className="rounded-full border border-orange-400 px-4 py-1 text-xs font-bold">Authenticity Guaranteed</span>
+              <span className="rounded-full border border-orange-400 px-4 py-1 text-xs font-bold">Curated Sourcing</span>
+              <span className="rounded-full border border-orange-400 px-4 py-1 text-xs font-bold">Fast Dispatch</span>
+            </div>
+          </div>
+          <div className="flex-1 flex items-center justify-center">
+            <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80" alt="Clouds from airplane" className="rounded-3xl shadow-2xl w-full max-w-md object-cover" />
+          </div>
+        </section>
+      );
+    }
+
+    function DripVaultSite() {
+      const [category, setCategory] = useState("All");
+      const [query, setQuery] = useState("");
+      const [size, setSize] = useState("All");
+      const [sort, setSort] = useState("featured");
+
+      const isFiltered = category !== "All" || size !== "All" || query.trim() !== "" || sort !== "featured";
+
+      const filtered = useMemo(() => {
+        let data = [...PRODUCTS];
+        if (category !== "All") data = data.filter((p) => p.category === category);
+        if (size !== "All") data = data.filter((p) => (p.size || "").toString() === size);
+        if (query.trim()) {
+          const q = query.toLowerCase();
+          data = data.filter((p) => p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q) || (p.condition || "").toLowerCase().includes(q));
+        }
+        if (sort === "price_asc") data.sort((a, b) => (a.price || 0) - (b.price || 0));
+        if (sort === "price_desc") data.sort((a, b) => (b.price || 0) - (a.price || 0));
+        return data;
+      }, [category, query, size, sort]);
+
+      function handleClearFilters() {
+        setCategory("All");
+        setQuery("");
+        setSize("All");
+        setSort("featured");
+      }
+
+      return (
+        <div className="min-h-screen bg-gradient-to-b from-black via-zinc-950 to-black text-orange-400 font-sans">
+          <HeroNav />
+          <HeroSection />
+          <motion.section id="top" className="relative overflow-hidden" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
+            <div className="mx-auto max-w-7xl px-4 py-24 sm:py-32 grid lg:grid-cols-2 gap-10 items-center">
+              <div>
+                <h1 className="text-5xl sm:text-6xl font-extrabold leading-tight bg-gradient-to-r from-violet-400 via-pink-500 to-orange-400 bg-clip-text text-transparent">DripVault — Authentic Streetwear & Football Shirts</h1>
+                <p className="mt-6 text-zinc-300 max-w-xl text-lg">Curated designer tees, football shirts & slides. 100% authentic. Built for resellers, collectors, and true style heads.</p>
+                <div className="mt-10 flex flex-wrap items-center gap-4">
+                  <a href="#shop" className="rounded-2xl bg-violet-500 px-7 py-3 font-bold text-black hover:bg-violet-400 shadow-xl shadow-violet-500/30">Shop Now</a>
+                  <a href="https://www.instagram.com/dripvault_plug/" target="_blank" rel="noreferrer" className="rounded-2xl border-2 border-violet-500 px-7 py-3 font-bold text-violet-400 hover:bg-violet-500/10">DM on Instagram</a>
+                </div>
+              </div>
+            </div>
+          </motion.section>
+
+          <section id="shop" className="mx-auto max-w-7xl px-4 py-20">
+            <SectionTitle eyebrow="Shop" title="Latest Arrivals" subtitle="Authentic streetwear & football shirts ready to cop." />
+            <FilterBar query={query} setQuery={setQuery} category={category} setCategory={setCategory} size={size} setSize={setSize} sort={sort} setSort={setSort} onClear={handleClearFilters} isFiltered={isFiltered} />
+            <div className="mb-4 text-sm text-zinc-400 flex items-center gap-2">
+              <span className="font-bold text-violet-400">{filtered.length}</span> result{filtered.length !== 1 ? "s" : ""} found
+            </div>
+            <motion.div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" initial="hidden" whileInView="visible" variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.15 } } }}>
+              {filtered.map((item) => (<ProductCard key={item.id} item={item} />))}
+              {filtered.length === 0 && (
+                <div className="col-span-full text-center text-zinc-400 py-14 border border-dashed border-zinc-700 rounded-2xl">No items match your filters. Try clearing search or switching category.</div>
+              )}
+            </motion.div>
+
+            <div className="mt-16 flex items-center justify-center">
+              <a href="https://www.instagram.com/dripvault_plug/" target="_blank" rel="noreferrer" className="rounded-2xl bg-violet-500 px-8 py-4 font-bold text-black hover:bg-violet-400 shadow-lg shadow-violet-500/30">See More on Instagram</a>
+            </div>
+          </section>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<DripVaultSite />);
+  </script>
+</body>
+</html>
+

@@ -25,15 +25,15 @@ const SIZES = ['S', 'M', 'L', 'XL', '44'];
 
 function Badge({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-medium tracking-wide border-violet-400 text-violet-300">{children}</span>
+    <span className="inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-medium tracking-wide border-orange-400 text-orange-300">{children}</span>
   );
 }
 
 function SectionTitle({ eyebrow, title, subtitle }: { eyebrow?: string; title: string; subtitle?: string }) {
   return (
     <motion.div className="mb-8 text-center" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-      {eyebrow && <div className="mb-2 text-xs uppercase tracking-[0.2em] text-violet-400">{eyebrow}</div>}
-      <h2 className="text-4xl sm:text-5xl font-extrabold bg-gradient-to-r from-violet-400 via-pink-500 to-orange-400 bg-clip-text text-transparent">{title}</h2>
+      {eyebrow && <div className="mb-2 text-xs uppercase tracking-[0.2em] text-orange-400">{eyebrow}</div>}
+      <h2 className="text-4xl sm:text-5xl font-extrabold bg-gradient-to-r from-orange-300 via-orange-400 to-orange-500 bg-clip-text text-transparent">{title}</h2>
       {subtitle && <p className="mt-2 text-zinc-300 max-w-2xl mx-auto">{subtitle}</p>}
     </motion.div>
   );
@@ -50,18 +50,18 @@ function FilterBar(props: {
   return (
     <div className="mb-8 grid grid-cols-1 md:grid-cols-4 gap-4">
       <div className="col-span-1 md:col-span-2">
-        <input type="text" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search teams, brands, items…" className="w-full rounded-2xl border border-violet-500/40 bg-zinc-950 px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/60" />
+        <input type="text" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search teams, brands, items…" className="w-full rounded-2xl border border-orange-500/40 bg-zinc-950 px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/60" />
       </div>
       <div>
-        <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full rounded-2xl border border-violet-500/40 bg-zinc-950 px-5 py-3 text-sm">
+        <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full rounded-2xl border border-orange-500/40 bg-zinc-950 px-5 py-3 text-sm">
           {CATEGORIES.map((c) => (<option key={c} value={c}>{c}</option>))}
         </select>
       </div>
       <div className="grid grid-cols-2 gap-4">
-        <select value={size} onChange={(e) => setSize(e.target.value)} className="rounded-2xl border border-violet-500/40 bg-zinc-950 px-5 py-3 text-sm">
+        <select value={size} onChange={(e) => setSize(e.target.value)} className="rounded-2xl border border-orange-500/40 bg-zinc-950 px-5 py-3 text-sm">
           {['All', ...SIZES].map((s) => (<option key={s} value={s}>{s}</option>))}
         </select>
-        <select value={sort} onChange={(e) => setSort(e.target.value)} className="rounded-2xl border border-violet-500/40 bg-zinc-950 px-5 py-3 text-sm">
+        <select value={sort} onChange={(e) => setSort(e.target.value)} className="rounded-2xl border border-orange-500/40 bg-zinc-950 px-5 py-3 text-sm">
           <option value="featured">Featured</option>
           <option value="price_asc">Price: Low → High</option>
           <option value="price_desc">Price: High → Low</option>
@@ -69,14 +69,14 @@ function FilterBar(props: {
       </div>
       {isFiltered && (
         <div className="col-span-full flex justify-end mt-2">
-          <button onClick={onClear} className="rounded-xl bg-zinc-800 border border-violet-400 px-4 py-2 text-xs font-bold text-violet-300 hover:bg-violet-900 transition">Clear Filters</button>
+          <button onClick={onClear} className="rounded-xl bg-zinc-800 border border-orange-400 px-4 py-2 text-xs font-bold text-orange-300 hover:bg-orange-900/20 transition">Clear Filters</button>
         </div>
       )}
     </div>
   );
 }
 
-function ProductCard({ item }: { item: Product }) {
+function ProductCard({ item, onAdd }: { item: Product; onAdd: (p: Product) => void }) {
   const message = encodeURIComponent(`Hi DripVault Plug, I'm interested in: ${item.name} (ID: ${item.id}). Is it still available?`);
   const unavailable = item.price === null;
   return (
@@ -92,13 +92,17 @@ function ProductCard({ item }: { item: Product }) {
             <p className="text-xs text-zinc-400">{item.condition}</p>
           </div>
           <div className="text-right">
-            <div className="text-violet-400 font-extrabold text-lg">{item.price ? `€${item.price}` : 'DM for Price'}</div>
+            <div className="text-orange-400 font-extrabold text-lg">{item.price ? `€${item.price}` : 'DM for Price'}</div>
             <div className="text-xs text-zinc-400">Size: {item.size}</div>
           </div>
         </div>
-        <div className="mt-4 flex items-center justify-between">
+        <div className="mt-4 flex items-center justify-between gap-2">
           <Badge>{item.category}</Badge>
-          <a href={`https://www.instagram.com/dripvault_plug/`} target="_blank" rel="noreferrer" className="rounded-xl bg-violet-500 px-4 py-2 text-sm font-bold text-black hover:bg-violet-400 active:scale-[.98]">DM to Buy</a>
+          {unavailable ? (
+            <a href={`https://www.instagram.com/dripvault_plug/`} target="_blank" rel="noreferrer" className="rounded-xl bg-orange-400 px-4 py-2 text-sm font-bold text-black hover:bg-orange-300 active:scale-[.98]">DM to Buy</a>
+          ) : (
+            <button onClick={() => onAdd(item)} className="rounded-xl bg-orange-500 px-4 py-2 text-sm font-bold text-black hover:bg-orange-400 active:scale-[.98]">Add to Cart</button>
+          )}
         </div>
         <div className="mt-3 text-xs text-zinc-500">Or quick link via <a className="underline hover:text-violet-400" href={`https://wa.me/?text=${message}`} target="_blank" rel="noreferrer">WhatsApp</a></div>
       </div>
@@ -150,11 +154,19 @@ function HeroSection() {
   );
 }
 
+type CartLine = { product: Product; quantity: number };
+
+function formatCurrency(n: number) {
+  return `€${n.toFixed(2)}`;
+}
+
 export default function App() {
   const [category, setCategory] = useState('All');
   const [query, setQuery] = useState('');
   const [size, setSize] = useState('All');
   const [sort, setSort] = useState('featured');
+  const [cartOpen, setCartOpen] = useState(false);
+  const [cart, setCart] = useState<CartLine[]>([]);
 
   const isFiltered = category !== 'All' || size !== 'All' || query.trim() !== '' || sort !== 'featured';
 
@@ -178,18 +190,65 @@ export default function App() {
     setSort('featured');
   }
 
+  function addToCart(product: Product) {
+    setCart((prev) => {
+      const idx = prev.findIndex((l) => l.product.id === product.id);
+      if (idx >= 0) {
+        const copy = [...prev];
+        copy[idx] = { ...copy[idx], quantity: copy[idx].quantity + 1 };
+        return copy;
+      }
+      return [...prev, { product, quantity: 1 }];
+    });
+    setCartOpen(true);
+  }
+
+  function removeFromCart(id: string) {
+    setCart((prev) => prev.filter((l) => l.product.id !== id));
+  }
+
+  function updateQty(id: string, qty: number) {
+    setCart((prev) => prev.map((l) => (l.product.id === id ? { ...l, quantity: Math.max(1, qty) } : l)));
+  }
+
+  const subtotal = cart.reduce((sum, l) => sum + (l.product.price || 0) * l.quantity, 0);
+  const cartCount = cart.reduce((n, l) => n + l.quantity, 0);
+
+  const checkoutText = useMemo(() => {
+    const lines = cart.map((l) => `${l.quantity} x ${l.product.name}${l.product.price ? ` @ €${l.product.price}` : ''}`);
+    const totalLine = subtotal > 0 ? `Total: €${subtotal.toFixed(2)}` : '';
+    return encodeURIComponent([`Hi DripVault Plug, I'd like to order:`, ...lines, totalLine].filter(Boolean).join("\n"));
+  }, [cart, subtotal]);
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-black via-zinc-950 to-black text-orange-400 font-sans">
-      <HeroNav />
+      {/* Nav with cart button */}
+      <div className="w-full sticky top-0 z-50 bg-black/90 border-b border-zinc-800 flex items-center justify-between px-8 py-4">
+        <div className="flex items-center gap-3">
+          <div className="bg-orange-400 text-black font-extrabold rounded-full w-10 h-10 flex items-center justify-center text-lg">DV</div>
+          <div>
+            <div className="font-extrabold text-xl leading-tight">DripVault Plug</div>
+            <div className="text-xs text-orange-300">Authentic Football & Designer</div>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <a href="#shop" className="hover:underline font-bold">Shop</a>
+          <button onClick={() => setCartOpen(true)} className="relative rounded-xl border-2 border-orange-400 px-4 py-2 font-bold hover:bg-orange-400 hover:text-black transition">
+            Cart
+            {cartCount > 0 && <span className="absolute -top-2 -right-2 bg-orange-500 text-black text-xs font-bold rounded-full px-2 py-0.5">{cartCount}</span>}
+          </button>
+          <a href="https://www.instagram.com/dripvault_plug/" target="_blank" rel="noreferrer" className="rounded-xl bg-orange-400 px-5 py-2 font-bold text-black hover:bg-orange-300 transition">Instagram</a>
+        </div>
+      </div>
       <HeroSection />
       <motion.section id="top" className="relative overflow-hidden" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
         <div className="mx-auto max-w-7xl px-4 py-24 sm:py-32 grid lg:grid-cols-2 gap-10 items-center">
           <div>
-            <h1 className="text-5xl sm:text-6xl font-extrabold leading-tight bg-gradient-to-r from-violet-400 via-pink-500 to-orange-400 bg-clip-text text-transparent">DripVault — Authentic Streetwear & Football Shirts</h1>
+            <h1 className="text-5xl sm:text-6xl font-extrabold leading-tight bg-gradient-to-r from-orange-300 via-orange-400 to-orange-500 bg-clip-text text-transparent">DripVault — Authentic Streetwear & Football Shirts</h1>
             <p className="mt-6 text-zinc-300 max-w-xl text-lg">Curated designer tees, football shirts & slides. 100% authentic. Built for resellers, collectors, and true style heads.</p>
             <div className="mt-10 flex flex-wrap items-center gap-4">
-              <a href="#shop" className="rounded-2xl bg-violet-500 px-7 py-3 font-bold text-black hover:bg-violet-400 shadow-xl shadow-violet-500/30">Shop Now</a>
-              <a href="https://www.instagram.com/dripvault_plug/" target="_blank" rel="noreferrer" className="rounded-2xl border-2 border-violet-500 px-7 py-3 font-bold text-violet-400 hover:bg-violet-500/10">DM on Instagram</a>
+              <a href="#shop" className="rounded-2xl bg-orange-500 px-7 py-3 font-bold text-black hover:bg-orange-400 shadow-xl shadow-orange-500/30">Shop Now</a>
+              <a href="https://www.instagram.com/dripvault_plug/" target="_blank" rel="noreferrer" className="rounded-2xl border-2 border-orange-500 px-7 py-3 font-bold text-orange-400 hover:bg-orange-500/10">DM on Instagram</a>
             </div>
           </div>
         </div>
@@ -210,19 +269,57 @@ export default function App() {
           isFiltered={isFiltered}
         />
         <div className="mb-4 text-sm text-zinc-400 flex items-center gap-2">
-          <span className="font-bold text-violet-400">{filtered.length}</span> result{filtered.length !== 1 ? 's' : ''} found
+          <span className="font-bold text-orange-400">{filtered.length}</span> result{filtered.length !== 1 ? 's' : ''} found
         </div>
         <motion.div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" initial="hidden" whileInView="visible" variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.15 } } }}>
-          {filtered.map((item) => (<ProductCard key={item.id} item={item} />))}
+          {filtered.map((item) => (<ProductCard key={item.id} item={item} onAdd={addToCart} />))}
           {filtered.length === 0 && (
             <div className="col-span-full text-center text-zinc-400 py-14 border border-dashed border-zinc-700 rounded-2xl">No items match your filters. Try clearing search or switching category.</div>
           )}
         </motion.div>
 
         <div className="mt-16 flex items-center justify-center">
-          <a href="https://www.instagram.com/dripvault_plug/" target="_blank" rel="noreferrer" className="rounded-2xl bg-violet-500 px-8 py-4 font-bold text-black hover:bg-violet-400 shadow-lg shadow-violet-500/30">See More on Instagram</a>
+          <a href="https://www.instagram.com/dripvault_plug/" target="_blank" rel="noreferrer" className="rounded-2xl bg-orange-500 px-8 py-4 font-bold text-black hover:bg-orange-400 shadow-lg shadow-orange-500/30">See More on Instagram</a>
         </div>
       </section>
+      {/* Cart Drawer */}
+      {cartOpen && (
+        <div className="fixed inset-0 z-50 flex">
+          <div className="flex-1 bg-black/50" onClick={() => setCartOpen(false)} />
+          <div className="w-full max-w-md bg-zinc-950 border-l border-zinc-800 p-6 overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-extrabold">Your Cart</h3>
+              <button onClick={() => setCartOpen(false)} className="rounded-md border border-orange-400 px-3 py-1 text-sm">Close</button>
+            </div>
+            {cart.length === 0 ? (
+              <p className="text-zinc-400">Your cart is empty.</p>
+            ) : (
+              <div className="space-y-4">
+                {cart.map((l) => (
+                  <div key={l.product.id} className="flex items-center gap-3 border border-zinc-800 rounded-xl p-3">
+                    <img src={l.product.image} alt={l.product.name} className="w-20 h-16 object-cover rounded-md" />
+                    <div className="flex-1">
+                      <div className="font-bold">{l.product.name}</div>
+                      <div className="text-sm text-zinc-400">{l.product.price ? formatCurrency(l.product.price) : 'DM for Price'}</div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button onClick={() => updateQty(l.product.id, l.quantity - 1)} className="w-7 h-7 rounded-md border border-zinc-700">-</button>
+                      <div className="w-8 text-center">{l.quantity}</div>
+                      <button onClick={() => updateQty(l.product.id, l.quantity + 1)} className="w-7 h-7 rounded-md border border-zinc-700">+</button>
+                    </div>
+                    <button onClick={() => removeFromCart(l.product.id)} className="ml-2 text-xs text-zinc-400 underline">Remove</button>
+                  </div>
+                ))}
+                <div className="pt-4 border-t border-zinc-800 flex items-center justify-between">
+                  <div className="text-zinc-400">Subtotal</div>
+                  <div className="font-extrabold">{formatCurrency(subtotal)}</div>
+                </div>
+                <a href={`https://wa.me/?text=${checkoutText}`} target="_blank" rel="noreferrer" className="block text-center rounded-xl bg-orange-500 px-5 py-3 font-bold text-black hover:bg-orange-400">Checkout via WhatsApp</a>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

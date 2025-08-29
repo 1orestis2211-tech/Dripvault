@@ -158,7 +158,7 @@ function HeroSection() {
         </div>
       </div>
       <div className="flex-1 flex items-center justify-center">
-        <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80" alt="Clouds from airplane" className="rounded-3xl shadow-2xl w-full max-w-md object-cover" />
+        <img src="/images/hero1.jpg" alt="DripVault community" className="rounded-3xl shadow-2xl w-full max-w-md object-cover" />
       </div>
     </section>
   );

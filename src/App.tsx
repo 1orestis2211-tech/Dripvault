@@ -13,12 +13,14 @@ type Product = {
 };
 
 const PRODUCTS: Product[] = [
-  { id: 'dv-001', name: 'Barcelona 25/26 Home Shirt', price: 65, size: 'M', category: 'Football Shirts', condition: 'New with tags', image: 'https://via.placeholder.com/600x450?text=Barcelona+Home' },
-  { id: 'dv-002', name: 'Milan 24/25 Home Shirt', price: 65, size: 'M', category: 'Football Shirts', condition: 'New with tags', image: 'https://via.placeholder.com/600x450?text=Milan+Home' },
-  { id: 'dv-003', name: 'Corteiz France Tee Black', price: 75, size: 'S', category: 'Designer Clothing', condition: 'New with tags', image: 'https://via.placeholder.com/600x450?text=Corteiz+France' },
-  { id: 'dv-004', name: 'Corteiz OG Island Tee Black', price: null, size: 'M', category: 'Designer Clothing', condition: 'Brand New', image: 'https://via.placeholder.com/600x450?text=Corteiz+OG' },
-  { id: 'dv-005', name: 'Trapstar Tee', price: null, size: 'M', category: 'Designer Clothing', condition: 'Used, Like New', image: 'https://via.placeholder.com/600x450?text=Trapstar+Tee' },
-  { id: 'dv-006', name: 'Black Yeezy Slides', price: null, size: '44', category: 'Footwear', condition: 'Brand New', image: 'https://via.placeholder.com/600x450?text=Yeezy+Slides' },
+  { id: 'dv-001', name: 'Barcelona 25/26 Home Shirt', price: 65, size: 'M', category: 'Football Shirts', condition: 'New with tags', image: '/images/barcelona_jersey.jpg', images: ['/images/barcelona_jersey.jpg', '/images/barcelona_jersey_2.jpg'] },
+  { id: 'dv-002', name: 'Milan 24/25 Home Shirt', price: 65, size: 'M', category: 'Football Shirts', condition: 'New with tags', image: '/images/milan_jersey.jpg', images: ['/images/milan_jersey.jpg', '/images/milan_jersey_2.jpg'] },
+  { id: 'dv-003', name: 'Corteiz France Tee Black', price: 75, size: 'S', category: 'Designer Clothing', condition: 'New with tags', image: '/images/corteiz_france_tee.jpg', images: ['/images/corteiz_france_tee.jpg', '/images/corteiz_france_tee_2.jpg'] },
+  { id: 'dv-004', name: 'Corteiz OG Island Tee Black', price: null, size: 'M', category: 'Designer Clothing', condition: 'Brand New', image: '/images/corteiz_og_tee.jpg', images: ['/images/corteiz_og_tee.jpg', '/images/corteiz_og_tee_2.jpg'] },
+  { id: 'dv-005', name: 'Trapstar Tee', price: null, size: 'M', category: 'Designer Clothing', condition: 'Used, Like New', image: '/images/trapstar_tee.jpg', images: ['/images/trapstar_tee.jpg', '/images/trapstar_tee_2.jpg'] },
+  { id: 'dv-006', name: 'Black Yeezy Slides', price: null, size: '44', category: 'Footwear', condition: 'Brand New', image: '/images/yeezy_slides.jpg', images: ['/images/yeezy_slides.jpg', '/images/yeezy_slides_2.jpg'] },
+  { id: 'dv-007', name: 'New Product 1', price: 80, size: 'L', category: 'Designer Clothing', condition: 'New with tags', image: '/images/new_product_1.jpg', images: ['/images/new_product_1.jpg', '/images/new_product_1_2.jpg'] },
+  { id: 'dv-008', name: 'New Product 2', price: 90, size: 'XL', category: 'Football Shirts', condition: 'Used, Like New', image: '/images/new_product_2.jpg', images: ['/images/new_product_2.jpg', '/images/new_product_2_2.jpg'] },
 ];
 
 const CATEGORIES = ['All', 'Football Shirts', 'Designer Clothing', 'Footwear'];

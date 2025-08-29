@@ -8,7 +8,8 @@ type Product = {
   size: string;
   category: string;
   condition: string;
-  image: string;
+  image: string; // legacy single image path (kept for backward-compat)
+  images?: string[]; // optional gallery image paths (first is primary)
 };
 
 const PRODUCTS: Product[] = [
@@ -79,10 +80,12 @@ function FilterBar(props: {
 function ProductCard({ item, onAdd }: { item: Product; onAdd: (p: Product) => void }) {
   const message = encodeURIComponent(`Hi DripVault Plug, I'm interested in: ${item.name} (ID: ${item.id}). Is it still available?`);
   const unavailable = item.price === null;
+  const [activeIdx, setActiveIdx] = useState(0);
+  const primaryImage = (item.images && item.images.length > 0 ? item.images[Math.min(activeIdx, item.images.length - 1)] : item.image) || item.image;
   return (
     <motion.div className="group rounded-3xl bg-gradient-to-br from-zinc-900 to-black border border-zinc-800 overflow-hidden hover:shadow-2xl hover:border-violet-400/60 transition-all" whileHover={{ scale: 1.05, rotate: 1 }}>
       <div className="aspect-[4/3] w-full bg-gradient-to-br from-zinc-800 to-zinc-900 overflow-hidden relative">
-        <img src={item.image} alt={item.name} className="h-full w-full object-cover object-center" />
+        <img src={primaryImage} alt={item.name} className="h-full w-full object-cover object-center" />
         {unavailable && (<span className="absolute top-2 left-2 bg-zinc-900/80 text-orange-400 text-xs font-bold px-3 py-1 rounded-full border border-orange-400 shadow">Unavailable</span>)}
       </div>
       <div className="p-5">
@@ -96,6 +99,15 @@ function ProductCard({ item, onAdd }: { item: Product; onAdd: (p: Product) => vo
             <div className="text-xs text-zinc-400">Size: {item.size}</div>
           </div>
         </div>
+        {item.images && item.images.length > 1 && (
+          <div className="mt-3 flex gap-2 overflow-x-auto">
+            {item.images.map((src, idx) => (
+              <button key={src + idx} onClick={() => setActiveIdx(idx)} className={`h-12 w-12 shrink-0 rounded-md border ${idx === activeIdx ? 'border-orange-500' : 'border-zinc-700'} overflow-hidden`}>
+                <img src={src} alt={`${item.name} ${idx + 1}`} className="h-full w-full object-cover" />
+              </button>
+            ))}
+          </div>
+        )}
         <div className="mt-4 flex items-center justify-between gap-2">
           <Badge>{item.category}</Badge>
           {unavailable ? (
@@ -297,7 +309,7 @@ export default function App() {
               <div className="space-y-4">
                 {cart.map((l) => (
                   <div key={l.product.id} className="flex items-center gap-3 border border-zinc-800 rounded-xl p-3">
-                    <img src={l.product.image} alt={l.product.name} className="w-20 h-16 object-cover rounded-md" />
+                    <img src={(l.product.images && l.product.images[0]) || l.product.image} alt={l.product.name} className="w-20 h-16 object-cover rounded-md" />
                     <div className="flex-1">
                       <div className="font-bold">{l.product.name}</div>
                       <div className="text-sm text-zinc-400">{l.product.price ? formatCurrency(l.product.price) : 'DM for Price'}</div>

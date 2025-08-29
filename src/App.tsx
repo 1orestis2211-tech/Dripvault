@@ -81,7 +81,7 @@ function FilterBar(props: {
 
 function ProductCard({ item, onAdd }: { item: Product; onAdd: (p: Product) => void }) {
   const message = encodeURIComponent(`Hi DripVault Plug, I'm interested in: ${item.name} (ID: ${item.id}). Is it still available?`);
-  const unavailable = item.price === null;
+  const unavailable = false; // Always allow Add to Cart even if price is null
   const [activeIdx, setActiveIdx] = useState(0);
   const primaryImage = (item.images && item.images.length > 0 ? item.images[Math.min(activeIdx, item.images.length - 1)] : item.image) || item.image;
   return (
@@ -112,11 +112,7 @@ function ProductCard({ item, onAdd }: { item: Product; onAdd: (p: Product) => vo
         )}
         <div className="mt-4 flex items-center justify-between gap-2">
           <Badge>{item.category}</Badge>
-          {unavailable ? (
-            <a href={`https://www.instagram.com/dripvault_plug/`} target="_blank" rel="noreferrer" className="rounded-xl bg-orange-400 px-4 py-2 text-sm font-bold text-black hover:bg-orange-300 active:scale-[.98]">DM to Buy</a>
-          ) : (
-            <button onClick={() => onAdd(item)} className="rounded-xl bg-orange-500 px-4 py-2 text-sm font-bold text-black hover:bg-orange-400 active:scale-[.98]">Add to Cart</button>
-          )}
+          <button onClick={() => onAdd(item)} className="rounded-xl bg-orange-500 px-4 py-2 text-sm font-bold text-black hover:bg-orange-400 active:scale-[.98]">Add to Cart</button>
         </div>
         <div className="mt-3 text-xs text-zinc-500">Or quick link via <a className="underline hover:text-violet-400" href={`https://wa.me/?text=${message}`} target="_blank" rel="noreferrer">WhatsApp</a></div>
       </div>

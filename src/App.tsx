@@ -82,7 +82,7 @@ function ProductCard({ item, onAdd }: { item: Product; onAdd: (p: Product) => vo
   return (
     <motion.div className="group rounded-3xl bg-gradient-to-br from-zinc-900 to-black border border-zinc-800 overflow-hidden hover:shadow-2xl hover:border-violet-400/60 transition-all" whileHover={{ scale: 1.05, rotate: 1 }}>
       <div className="aspect-[4/3] w-full bg-gradient-to-br from-zinc-800 to-zinc-900 overflow-hidden relative">
-        <motion.img src={item.image} alt={item.name} className="h-full w-full object-cover object-center group-hover:scale-110 transition-transform duration-500" />
+        <img src={item.image} alt={item.name} className="h-full w-full object-cover object-center" />
         {unavailable && (<span className="absolute top-2 left-2 bg-zinc-900/80 text-orange-400 text-xs font-bold px-3 py-1 rounded-full border border-orange-400 shadow">Unavailable</span>)}
       </div>
       <div className="p-5">
